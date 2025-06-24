@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Create Bill</title>
+    <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+    <h1>Test Create Bill Functionality</h1>
+    
+    <div id="status">Checking wallet connection...</div>
+    
+    <div id="controls" style="display: none;">
+        <h3>Create Test Bill</h3>
+        <label>Amount (ETH): <input type="number" id="amount" value="0.001" step="0.001"></label><br><br>
+        <button onclick="createBill()">Create Bill</button>
+    </div>
+    
+    <div id="result"></div>
+    
+    <script>
+        const CONTRACT_ADDRESS = "0x7DEe54491A9f04Fe7Fe360322cd330836ec8328e";
+        const ABI = [
+            {
+                "inputs": [
+                    {"internalType": "bytes32", "name": "billId", "type": "bytes32"},
+                    {"internalType": "address", "name": "token", "type": "address"},
+                    {"internalType": "uint256", "name": "amount", "type": "uint256"}
+                ],
+                "name": "createBill",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {"internalType": "address", "name": "user", "type": "address"},
+                    {"internalType": "uint256", "name": "nonce", "type": "uint256"}
+                ],
+                "name": "generateBillId",
+                "outputs": [{"internalType": "bytes32", "name": "", "type": "bytes32"}],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+        
+        let provider, signer, contract;
+        
+        async function init() {
+            try {
+                if (typeof window.ethereum !== 'undefined') {
+                    provider = new ethers.providers.Web3Provider(window.ethereum);
+                    await provider.send("eth_requestAccounts", []);
+                    signer = provider.getSigner();
+                    contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+                    
+                    const address = await signer.getAddress();
+                    const network = await provider.getNetwork();
+                    
+                    document.getElementById('status').innerHTML = `
+                        Connected: ${address}<br>
+                        Network: ${network.name} (${network.chainId})<br>
+                        Contract: ${CONTRACT_ADDRESS}
+                    `;
+                    
+                    if (network.chainId === 2810) {
+                        document.getElementById('controls').style.display = 'block';
+                    } else {
+                        document.getElementById('status').innerHTML += '<br><br>⚠️ Please switch to Morph Holesky (Chain ID: 2810)';
+                    }
+                } else {
+                    document.getElementById('status').innerHTML = 'Please install MetaMask';
+                }
+            } catch (error) {
+                document.getElementById('status').innerHTML = 'Error: ' + error.message;
+            }
+        }
+        
+        async function createBill() {
+            try {
+                const amount = document.getElementById('amount').value;
+                const address = await signer.getAddress();
+                const nonce = Date.now();
+                
+                document.getElementById('result').innerHTML = 'Generating Bill ID...';
+                
+                // Generate bill ID
+                const billId = await contract.generateBillId(address, nonce);
+                console.log('Generated Bill ID:', billId);
+                
+                document.getElementById('result').innerHTML = `
+                    Bill ID: ${billId}<br>
+                    Creating bill...
+                `;
+                
+                // Create bill
+                const tx = await contract.createBill(
+                    billId,
+                    "0x0000000000000000000000000000000000000000", // ETH
+                    ethers.utils.parseEther(amount)
+                );
+                
+                document.getElementById('result').innerHTML = `
+                    Bill ID: ${billId}<br>
+                    Transaction: ${tx.hash}<br>
+                    Waiting for confirmation...
+                `;
+                
+                const receipt = await tx.wait();
+                
+                document.getElementById('result').innerHTML = `
+                    ✅ Bill Created Successfully!<br>
+                    Bill ID: ${billId}<br>
+                    Transaction: ${tx.hash}<br>
+                    Block: ${receipt.blockNumber}<br>
+                    Gas Used: ${receipt.gasUsed.toString()}<br>
+                    <br>
+                    Payment URL: <a href="http://localhost:3000/pay/${billId}" target="_blank">
+                        http://localhost:3000/pay/${billId}
+                    </a>
+                `;
+                
+            } catch (error) {
+                document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                console.error('Error:', error);
+            }
+        }
+        
+        // Initialize when page loads
+        window.onload = init;
+    </script>
+</body>
+</html> 

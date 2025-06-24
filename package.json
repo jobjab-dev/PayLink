@@ -1,0 +1,57 @@
+{
+  "name": "pay-link-qr-dapp",
+  "version": "1.0.0",
+  "description": "Pay-Link QR dApp on Morph - Complete mono-repo with smart contracts, web dApp, and mobile app",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "pnpm --filter web dev",
+    "dev:mobile": "pnpm --filter mobile start",
+    "test": "pnpm --filter contract test && pnpm --filter web test && pnpm --filter ui test",
+    "lint": "eslint packages/**/*.{js,ts,tsx}",
+    "lint:fix": "eslint packages/**/*.{js,ts,tsx} --fix",
+    "format": "prettier --write packages/**/*.{js,ts,tsx,json,md}",
+    "build": "turbo run build",
+    "build:web": "pnpm --filter web build",
+    "build:mobile": "pnpm --filter mobile build",
+    "clean": "turbo run clean",
+    "type-check": "turbo run type-check",
+    "deploy:contract": "pnpm --filter contract deploy",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-prettier": "^5.1.3",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.2.4",
+    "turbo": "^1.12.4",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.1",
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }
+} 

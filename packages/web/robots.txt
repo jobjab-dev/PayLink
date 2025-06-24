@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://paylink.morph.network/sitemap.xml
+
+# Block specific paths if needed
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+
+# Allow important pages
+Allow: /
+Allow: /create
+Allow: /scan
+Allow: /pay/
+Allow: /networks 

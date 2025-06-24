@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "PayLink",
+    "slug": "paylink-morph",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#6366f1"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.morphl2.paylink",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to scan QR codes for payments.",
+        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#6366f1"
+      },
+      "package": "com.morphl2.paylink",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "scheme": "morphpay",
+    "plugins": [
+      "expo-camera",
+      "expo-barcode-scanner"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "ae900b34-2823-4696-a0db-7f31a3b12edf"
+      }
+    },
+    "owner": "jobjab"
+  }
+}
