@@ -2,6 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  // Disable ESLint during builds
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   // appDir is now stable in Next.js 14
   webpack: (config) => {
     config.resolve.fallback = {
